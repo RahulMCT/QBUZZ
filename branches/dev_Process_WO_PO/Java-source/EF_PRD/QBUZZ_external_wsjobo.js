@@ -39,6 +39,7 @@
 -- 0024 30-01-2024 - SPC-630 Error Message update base on user language.
 -- 0025 03-06-2024 - SPC-698 Set layout for Part and Part Description, and populate Part Description.
 -- 0026 15-10-2025 - SPC-768 Note field mandatory based on status(TCS/TC){Rev 0026 not required}.
+-- 0026 15-10-2025 - SPC-768 Note field mandatory based on status(TCS/TC). {Addd some extra cmt}
 -- -------------------------------------------------------------------------------
  */
 
