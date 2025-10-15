@@ -1,0 +1,363 @@
+/*
+-- -------------------------------------------------------------------------------
+--
+-- Copyright © 2022 by Spectades BV
+--
+-- Filename    : QBUZZ_external_wsjobo.txt
+--
+-- Description : Extensible Framework JavaScript WSJOBO - New Tab on WSJOBO
+-
+-- Product     : EAM             Release : 11.7          
+--
+-- Author      :MCT
+--
+-- CHANGE HISTORY
+--
+-- 0001 21-10-2022 - MCT - PSPORD- Protect fields/tab when status is 'To be Approved'	  
+-- -------------------------------------------------------------------------------
+*/
+
+//Global Variables//
+var vdbgAllowed = true;
+
+Ext.define('EAM.custom.external_pspord', {
+	extend: 'EAM.custom.AbstractExtensibleFramework',
+	getSelectors: function () {
+		return {
+			'[extensibleFramework] [tabName=HDR]': {
+				afterrender: function () {
+					vdbgAllowed && EAM.Utils.debugMessage('afterrender function called !');
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var vPageMode = formPanel.getFldValue("pagemode");
+					vdbgAllowed && EAM.Utils.debugMessage('vPageMode value : ' + vPageMode);
+					var vStatus = formPanel.getFldValue("purchaseorderstatus");
+					debugger;
+					if (vUsrGrp === "VLOOT-MAN" && vStatus === "KA" && vPageMode === "view") {
+						protectHDRFields(formPanel);
+					}
+				},
+				afterrecordchange: function () {
+					vdbgAllowed && EAM.Utils.debugMessage('afterrecordchange function called !');
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var vPageMode = formPanel.getFldValue("pagemode");
+					var vStatus = formPanel.getFldValue("purchaseorderstatus");
+					debugger;
+					if (vUsrGrp === "VLOOT-MAN" && vStatus === "KA" && vPageMode === "view") {
+						protectHDRFields(formPanel);
+					}
+
+				},
+				aftersaverecord: function () {
+					vdbgAllowed && EAM.Utils.debugMessage('aftersaverecord function called !');
+					var formPanel = this.getFormPanel();
+					var vPageMode = formPanel.getFldValue("pagemode");
+					var vUsrGrp = getUserGroup();
+					var vStatus = formPanel.getFldValue("purchaseorderstatus");
+					if (vUsrGrp === "VLOOT-MAN" && vStatus === "KA" && vPageMode === "view") {
+						protectHDRFields(formPanel);
+					}
+
+				},
+				afterreset: function () {
+					vdbgAllowed && EAM.Utils.debugMessage('afterreset function called !');
+					var formPanel = this.getFormPanel();
+					var vPageMode = formPanel.getFldValue("pagemode");
+					var vUsrGrp = getUserGroup();
+					var vStatus = formPanel.getFldValue("purchaseorderstatus");
+					if (vUsrGrp === "VLOOT-MAN" && vStatus === "KA" && vPageMode === "view") {
+						protectHDRFields(formPanel);
+					}
+				}
+			},
+			'[extensibleFramework] [tabName=PAR]': {
+				afterrender: function () {
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					if (vUsrGrp === "VLOOT-MAN" && vStatus === "KA") {
+					protectPARFields(formPanel);
+					}
+				},
+				afterrecordchange: function () {
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					EAM.Utils.debugMessage(vStatus);
+					if (vUsrGrp === "VLOOT-MAN" && vStatus === "KA") {
+					protectPARFields(formPanel);
+					}
+				},
+				afterreset: function () {
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					if (vUsrGrp === "VLOOT-MAN" && vStatus === "KA") {
+					protectPARFields(formPanel);
+					}
+				},
+				afterloadrecord:function(){
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					if ((vUsrGrp === "VLOOT-MAN" && vStatus === "KA")) {
+					protectPARFields(formPanel);
+					}
+				}
+			},
+			'[extensibleFramework] [tabName=ACT]': {
+				afterrender: function () {
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					if ((vUsrGrp === "VLOOT-MAN" && vStatus === "KA")||(vUsrGrp === "VLOOT-MAN" && vStatus === "GA")) {
+					protectSRVFields(formPanel);
+					}
+				},
+				afterrecordchange: function () {
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					if ((vUsrGrp === "VLOOT-MAN" && vStatus === "KA")||(vUsrGrp === "VLOOT-MAN" && vStatus === "GA")) {
+					protectSRVFields(formPanel);
+					}
+				},
+				afterreset: function () {
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					if ((vUsrGrp === "VLOOT-MAN" && vStatus === "KA")||(vUsrGrp === "VLOOT-MAN" && vStatus === "GA")) {
+					protectSRVFields(formPanel);
+					}
+				},
+				afterloadrecord:function(){
+					var formPanel = this.getFormPanel();
+					var vUsrGrp = getUserGroup();
+					var fromHDRRequestData = EAM.Ajax.request({
+							url: 'PSPORD.HDR',
+							//params: b.values || g,
+							extraParams: {
+								'ordercode': formPanel.getFldValue("ordercode"),
+								'organization': formPanel.getFldValue("organization"),
+								'SYSTEM_FUNCTION_NAME': 'PSPORD',
+								'USER_FUNCTION_NAME': 'PSPORD',
+								'CURRENT_TAB_NAME': 'HDR',
+								'ONLY_DATA_REQUIRED': false
+							}
+						});
+					var vStatus = fromHDRRequestData.responseData.pageData.values.purchaseorderstatus.selected;
+					if ((vUsrGrp === "VLOOT-MAN" && vStatus === "KA")||(vUsrGrp === "VLOOT-MAN" && vStatus === "GA")) {
+					protectSRVFields(formPanel);
+					}
+				}
+			}
+		}
+	}
+});
+
+function protectHDRFields(formPanel) {
+	var vFld = "";
+	vFld = {
+		"storecode": "protected",
+		"description": "protected",
+		"originatorcode": "protected",
+		"duedate": "protected",
+		"buyercode": "protected",
+		"deliveryaddresscode": "protected",
+		"class": "protected",
+		"packagetrackingnumber": "protected",
+		"suppliercode": "protected",
+		"currency": "protected",
+		"exchangerate": "protected",
+		"defaultapprovercode": "protected",
+		"organization": "protected",
+		"udfchar01": "protected",
+		"udfchar02": "protected",
+		"udfchar03": "protected",
+		"shipvia": "protected",
+		"paymentterms": "protected",
+		"freightterms": "protected",
+		"fobpoint": "protected",
+		"paybymethod": "protected",
+		"creditcard_disp": "protected"
+	}
+	EAM.Builder.setFieldState(vFld, formPanel.getForm().getFields());
+};
+function protectPARFields(formPanel) {
+	var vFld = "";
+	 Ext.ComponentQuery.query("#createpart")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#addeditcomments")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#editpartdescription")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#selectparts")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#selectsuppliercatalogparts")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#extrachargediscount")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#ipaddparts")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#ipupdatebuyitems")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#ipviewsyncerr")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#substitutepart")[0].setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=deleteRec]").setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=newRec]").setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=saveRec]").setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=clearRec]").setDisabled(true);
+	vFld = {
+		"partcode": "protected",
+		"partdesc": "protected",
+		"polinetype": "protected",
+		"quantity": "protected",
+		"uom": "protected",
+		"partqty": "protected",
+		"partuom": "protected",
+		"price": "protected",
+		"currency": "protected",
+		"workorder": "protected",
+		"activity": "protected",
+		"jobsequence": "protected",
+		"taxcode": "protected",
+		"polinestatus": "protected",
+		"conditioncode": "protected",
+		"conversionfactor": "protected",
+		"duedate": "protected",
+		"packagetrackingnumber": "protected",
+		"udfchar01": "protected",
+		"udfchar02": "protected",
+		"udfchar03": "protected",
+		"udfchar04": "protected",
+		"udfchar05": "protected",
+		"comments" : "protected"
+	}
+	EAM.Builder.setFieldState(vFld, formPanel.getForm().getFields());
+};
+function protectSRVFields(formPanel) {
+	var vFld = "";
+	 Ext.ComponentQuery.query("#addeditcomments")[0].setDisabled(true);
+	 Ext.ComponentQuery.query("#createworkorderactivity")[0].setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=deleteRec]").setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=newRec]").setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=saveRec]").setDisabled(true);
+	 formPanel.up("[screen]").down("button[action=clearRec]").setDisabled(true);
+	vFld = {
+		"linetype": "protected",
+		"linestatus": "protected",
+		"requisitioncode": "protected",
+		"requisitionline": "protected",
+		"workordercode": "protected",
+		"activity": "protected",
+		"jobsequence": "protected",
+		"tradecode": "protected",
+		"taskcode": "protected",
+		"jobplan": "protected",
+		"hoursrequested": "protected",
+		"price": "protected",
+		"currencycode": "protected",
+		"duedate": "protected",
+		"taxcode": "protected",
+		"freezerate": "protected",
+		"comments" : "protected"
+	}
+	EAM.Builder.setFieldState(vFld, formPanel.getForm().getFields());
+};
+function getUserGroup() {
+	var requestData = {
+		GRID_NAME: "QUUGRP",
+		GRID_TYPE: "LOV",
+		REQUEST_TYPE: "LOV.HEAD_DATA.STORED",
+		LOV_ALIAS_NAME_1: "parameter.usrcode",
+		LOV_ALIAS_VALUE_1: EAM.AppData.getUser(),
+		LOV_ALIAS_TYPE_1: "text",
+		CURRENT_TAB_NAME: "HDR",
+		USER_FUNCTION_NAME: "NUUGRP",
+		SYSTEM_FUNCTION_NAME: "BSUDSC",
+		COMPONENT_INFO_TYPE: "DATA_ONLY"
+	};
+
+	var response = EAM.Ajax.request({
+			url: "LOVPOP",
+			params: requestData
+		});
+	return response.responseData.pageData.grid.GRIDRESULT.GRID.DATA[0].usrgroup;
+};

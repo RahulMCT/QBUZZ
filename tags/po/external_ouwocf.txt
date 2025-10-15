@@ -1,0 +1,802 @@
+/*
+-- -------------------------------------------------------------------------------
+--
+-- Copyright © 2022 by Spectades BV
+--
+-- Filename    : QBUZZ_external_OUWOCF.txt
+--
+-- Description : Extensible Framework JavaScript OUWOCF - Work Order Control
+--
+-- Product     : EAM             Release : 11.7
+--
+-- Author      : MCT
+--
+-- CHANGE HISTORY
+--
+-- 0001 21-09-2022 - MCT - Creation
+-- 0002 21-10-2022 - MCT - Added Generate PO Functionality
+-- -------------------------------------------------------------------------------
+ */
+
+var headerData = null;
+var userFunction = 'OUWOCF';
+var webservicePromptCode = 'OUWOCF';
+var vFunCode = "OUWOCF";
+var vTabName = "HDR";
+var vStatusDropDown = "";
+var vResetCalled = false;
+var gReqDate = "", gFromDate = "", gToDate = "", gUntilDate = "";
+var vCopyClicked = false;
+
+var debug = true;
+var vcurrentRecord = "";
+var myDropDown = "";
+var vUser = "";
+var vLang = "";
+var vCheck = "";
+
+Ext.define('EAM.custom.external_ouwocf', {
+    extend: 'EAM.custom.AbstractExtensibleFramework',
+    getSelectors: function () {
+        return {
+            '[extensibleFramework] [tabName=HDR]': {
+                afterrecordchange: function (a, b) {
+                    if (a.userFunction === vFunCode && a.tabName === vTabName) {
+                        try {
+                            debug && console.log('afterrecordchange called');
+                            vResetCalled = false;
+                            var formPanel = this.getFormPanel();
+                            var vPageMode = formPanel.getFldValue("pagemode");
+                            if (vPageMode === "display") {
+                                if (vCopyClicked === false) {
+                                    setOrg(formPanel);
+                                    setCreateddt(formPanel);
+                                }
+                                cleandummyfields(formPanel);
+                            }
+                            if (vCopyClicked == true) {
+                                copyHandler(formPanel);
+                                setCreateddt(formPanel);
+                            }
+                            var screen = this.getScreen();
+                            if (a.isReset === true) {
+                                vResetCalled = true;
+                                cleandummyfields(formPanel);
+                            }
+                            setStore(formPanel);
+                            if (EAM.getApplication().designerMode === false) {
+                                handleStatusChange(formPanel, "DELAYED");
+                            }
+                            maintainFormPanelState(formPanel);
+                            setStatus(a, formPanel);
+                        } catch (err) {
+                            debug && console.log("#after recordchange: " + err);
+                        }
+                    }
+                },
+                afterrender: function (a, b) {
+                    if (EAM.getApplication().designerMode === false && a.userFunction === vFunCode && a.tabName === vTabName) {
+                        debug && console.log('afterrender called');
+                        var formPanel = this.getFormPanel();
+                        setFldWith(formPanel);
+                        makeStatusDropDown(formPanel);
+                        var manifestButtons = Ext.create('Ext.container.Container', {
+                                //itemId: 'rightContainer',
+                                //autoScroll: true,
+                                layout: {
+                                    type: 'vbox'
+                                },
+                                width: '100%',
+                                height: '100%',
+                                defaults: {
+                                    labelWidth: 80,
+                                    flex: 1,
+                                },
+                                items: [{
+                                        xtype: 'button',
+                                        id: 'generatepoid',
+                                        margin: '0 200 0 20',
+                                        name: 'generatepoid',
+                                        handler: function () {
+                                            EAM.Utils.debugMessage("generatepoid Button Clicked");
+                                            var RecordViewDataset = formPanel.getScreen().getRecordView().form._record.data;
+                                            if (RecordViewDataset.recordid == "") {
+                                                EAM.Messaging.showError('You must select a record before performing this action.');
+                                                return;
+                                            }
+                                            if (formPanel.isDirty()) {
+                                                EAM.Messaging.showError(EAM.Lang.getMessage('MSG_ERR_SAVE_CHANGES_FIRST'));
+                                                return;
+                                            }
+                                            toInitializeCustomTab(formPanel);
+                                            insertRecord(formPanel);
+                                            var resetButton = EAM.Utils.getMainToolbar().getResetButton();
+                                            resetButton.fireEvent("click", resetButton);
+                                            handleStatusChange(formPanel, "HDR");
+                                            vReturnVar = true;
+                                        },
+                                        text: 'Generate PO'
+                                    }
+                                ]
+                            });
+                        var vUpperFld = formPanel.getFld("wspf_10_ctl_status");
+                        var vUpperFldParentContainer = vUpperFld.up('container');
+                        var vUpperFldIndx = vUpperFldParentContainer.items.keys.indexOf(vUpperFld.id);
+                        vUpperFldParentContainer.add(+vUpperFldIndx + 2, manifestButtons);
+
+                        /*var vLoc1 = formPanel.getFld("wspf_10_ovr_location");
+                        vLoc1DescFld = Ext.create('Ext.form.TextField', {
+                        fieldLabel: ' ',
+                        margin: '0 0 0 -98',
+                        width: 450,
+                        renderTo: vLoc1.id,
+                        readOnly: true
+                        });*/
+                        handleStatusChange(formPanel, "DELAYED");
+                        maintainFormPanelState(formPanel);
+                    }
+                },
+                aftersaverecord: function (a, b) {
+                    var formPanel = this.getFormPanel();
+                    if (formPanel.userFunction === vFunCode && formPanel.tabName === vTabName) {
+                        debug && console.log('aftersaverecord called');
+                        try {
+                            if (b) {
+                                setStore(formPanel);
+                                if (EAM.getApplication().designerMode === false) {
+                                    handleStatusChange(formPanel, "DELAYED");
+                                }
+                                maintainFormPanelState(formPanel);
+                            }
+                        } catch (err) {
+                            debug && console.log("aftersaverecord HDR : " + err);
+                        }
+                    }
+                },
+                before_eam_beforesaverecord: function (a, b) {
+                    debug && console.log('before_eam_beforesaverecord');
+                    try {
+                        if (a.userFunction === vFunCode && a.tabName === vTabName) {
+                            if (EAM.getApplication().designerMode === false) {
+                                var formPanel = this.getFormPanel();
+                                var vPageMode = formPanel.getFldValue("pagemode");
+                                if (vPageMode === "display") {
+                                    //generate unique record code
+                                    debug && console.log(formPanel.getFldValue('wspf_10_ctl_seq'));
+                                    var requestData = {
+                                        GRID_NAME: "QUSEQW",
+                                        GRID_TYPE: "LOV",
+                                        REQUEST_TYPE: "LOV.HEAD_DATA.STORED",
+                                        CURRENT_TAB_NAME: vTabName,
+                                        USER_FUNCTION_NAME: vFunCode,
+                                        SYSTEM_FUNCTION_NAME: "BSUDSC",
+                                        COMPONENT_INFO_TYPE: "DATA_ONLY"
+                                    };
+                                    var response = EAM.Ajax.request({
+                                            url: "LOVPOP",
+                                            params: requestData
+                                        });
+                                    debug && console.log('insdesc');
+                                    if (response.responseData.pageData.grid.GRIDRESULT.GRID.DATA.length > 0) {
+                                        var vAutoNum = response.responseData.pageData.grid.GRIDRESULT.GRID.DATA[0].nextseq;
+                                        formPanel.setFldValue("wspf_10_ctl_seq", vAutoNum, true);
+                                    }
+                                    var currStatus = vStatusDropDown.getValue();
+                                    formPanel.setFldValue("wspf_10_ctl_status", currStatus, true);
+                                }
+                                /*if ((vPageMode === "view") && (formPanel.getFldValue("wspf_10_ovr_status") === "E")) {
+                                if ((Ext.isEmpty(formPanel.getFldValue("wspf_10_ovr_extdata"))) || (Ext.isEmpty(formPanel.getFldValue("wspf_10_ovr_extname"))) || (Ext.isEmpty(formPanel.getFldValue("wspf_10_ovr_extjustification")))) {
+                                EAM.Messaging.showError({
+                                msg: "You cannot extend a override request without adding To Date,Name and Extension Justification"
+                                });
+                                return false;
+                                }
+                                }*/
+                            }
+                        }
+                    } catch (err) {
+                        debug && console.log("error in before_eam_beforesaverecord : " + err);
+                    }
+                },
+                afternewrecord: function (a, b) {
+                    debug && console.log("after new record clicked");
+                    if (a.userFunction === vFunCode && a.tabName === vTabName) {
+                        var formPanel = this.getFormPanel();
+                        cleandummyfields(formPanel);
+                        setStatus(a, formPanel);
+                    }
+                },
+                beforedestroyrecord: function (a, b) {
+                    debug && console.log("beforedestroyrecord function called");
+                    if (a.userFunction === vFunCode && a.tabName === vTabName) {
+                        try {
+                            var formPanel = this.getFormPanel();
+                            var vStatusValue = formPanel.getFldValue("wspf_10_ovr_status");
+                            if (vStatusValue === "C" || vStatusValue === "D") {
+                                EAM.Messaging.showError({
+                                    msg: "You cannot delete a override request record with statuses Cancelled or Removed."
+                                });
+                                return false;
+                            }
+                        } catch (err) {
+                            debug && console.log('beforedestroyrecord HDR err : ' + err);
+                        }
+                    }
+                },
+                afterdestroyrecord: function (a, b) {
+                    debug && console.log("afterdestroyrecord function called");
+                    if (a.userFunction === vFunCode && a.tabName === vTabName) {
+                        try {
+                            var formPanel = this.getFormPanel();
+                            var vPageMode = formPanel.getFldValue("pagemode");
+                            setStore(formPanel);
+                            if (EAM.getApplication().designerMode === false) {
+                                handleStatusChange(formPanel, "DELAYED");
+                            }
+                            if (vPageMode === "display") {
+                                setOrg(formPanel);
+                                setCreateddt(formPanel);
+                            }
+                        } catch (err) {
+                            debug && console.log('afterdestroyrecord HDR err : ' + err);
+                        }
+                    }
+                }
+            },
+            '[extensibleFramework] maintoolbar button[action=copyRec]': {
+                click: function (a, b, c) {
+                    try {
+                        debug && console.log('copy record button clicked');
+                        var formPanel = this.getFormPanel();
+                        vCopyClicked = true;
+                    } catch (err) {
+                        debug && console.log("copy record button click err :" + err);
+                    }
+                }
+            },
+            '[extensibleFramework] [tabName=HDR] lovfield[name=wspf_10_ctl_ven]': {
+                beforetriggerclick: function (field, event) {
+                    var formPanel = this.getFormPanel();
+                    if (EAM.getApplication().designerMode === false && formPanel.userFunction === vFunCode && formPanel.tabName === vTabName) {
+                        hdr_overrideSuplov(field);
+                    }
+                }
+            },
+            '[extensibleFramework] [tabName=HDR] lovfield[name=wspf_10_ctl_org]': {
+                beforetriggerclick: function (field, event) {
+                    var formPanel = this.getFormPanel();
+                    if (EAM.getApplication().designerMode === false && formPanel.userFunction === vFunCode && formPanel.tabName === vTabName) {
+                        debug && console.log('beforetriggerclick of wspf_10_ctl_org called');
+                        hdr_overrideorglov(field);
+                    }
+                }
+            }
+        }
+    }
+
+});
+function setOrg(formPanel) {
+    debug && console.log('setOrg() called');
+    var orgField = formPanel.getForm().findField('wspf_10_ctl_org');
+    formPanel.setFldValue('wspf_10_ctl_org', EAM.AppData.getInstallParams().get('userorg'), true);
+};
+
+function setCreateddt(formPanel) {
+    debug && console.log('setCreateddt() called');
+    formPanel.setFldValue('wspf_10_ctl_wccreated', EAM.Utils.getServerDate(formPanel.getRecord()), true);
+};
+function setFldWith(formPanel) {
+    try {
+        debug && console.log('setFldWith() called');
+
+        var vDescFld = formPanel.getFld("wspf_10_description");
+        if (!Ext.isEmpty(vDescFld)) {
+            vDescFld.setWidth("700");
+        }
+        var vDateGenFld = formPanel.getFld("wspf_10_ctl_dategen");
+        var vCreatedFld = formPanel.getFld("wspf_10_ctl_wccreatedby");
+        if (!Ext.isEmpty(vCreatedFld)) {
+            vCreatedFld.setWidth(vDateGenFld.getWidth());
+        }
+        var vPoCreatedFld = formPanel.getFld("wspf_10_ctl_pocreatedby");
+        if (!Ext.isEmpty(vPoCreatedFld)) {
+            vPoCreatedFld.setWidth(vDateGenFld.getWidth());
+        }
+        maintainFormPanelState(formPanel);
+    } catch (e) {
+        debug && console.log('Error in setFldWith : ' + e);
+    }
+};
+function cleandummyfields(formPanel) {
+    try {
+        debug && console.log("cleandummyfields function called ");
+        /*var vLoc1 = formPanel.getFldValue("wspf_10_ovr_location");
+        var vLoc2 = formPanel.getFldValue("wspf_10_ovr_location1");
+        var vLoc3 = formPanel.getFldValue("wspf_10_ovr_location2");
+        if (!vLoc1 && vLoc1DescFld) {
+        vLoc1DescFld.setValue("");
+        }
+        if (!vLoc2 && vLoc2DescFld) {
+        vLoc2DescFld.setValue("");
+        }
+        if (!vLoc3 && vLoc3DescFld) {
+        vLoc3DescFld.setValue("");
+        }*/
+    } catch (err) {
+        debug && console.log("Error in cleandummyfields : " + err);
+    }
+};
+function makeStatusDropDown(formPanel) {
+    try {
+        debug && console.log('makeStatusDropDown() called');
+        var vStatus = "-";
+        if (!Ext.isEmpty(formPanel.getFldValue("wspf_10_ctl_status"))) {
+            vStatus = formPanel.getFldValue("wspf_10_ctl_status");
+        }
+        var vUser = EAM.AppData.getUser();
+        var vOrg = formPanel.getFldValue("wspf_10_ctl_org");
+        var vPageMode = formPanel.getFldValue("pagemode");
+        if (!vOrg) {
+            vOrg = EAM.AppData.getInstallParams().get('userorg');
+        }
+        var action = "";
+        if (vPageMode === "display") {
+            action = 'I';
+        } else {
+            action = 'U';
+        }
+        var requestData = {
+            GRID_NAME: "LVWOCSTATUS",
+            GRID_TYPE: "LOV",
+            REQUEST_TYPE: "LOV.HEAD_DATA.STORED",
+            LOV_ALIAS_NAME_1: "parameter.user",
+            LOV_ALIAS_VALUE_1: vUser,
+            LOV_ALIAS_TYPE_1: "text",
+            LOV_ALIAS_NAME_2: "parameter.status",
+            LOV_ALIAS_VALUE_2: vStatus,
+            LOV_ALIAS_TYPE_2: "text",
+            LOV_ALIAS_NAME_3: "parameter.action",
+            LOV_ALIAS_VALUE_3: action,
+            LOV_ALIAS_TYPE_3: "text",
+            LOV_ALIAS_NAME_6: "parameter.organization",
+            LOV_ALIAS_VALUE_6: vOrg,
+            LOV_ALIAS_TYPE_6: "text",
+            CURRENT_TAB_NAME: vTabName,
+            USER_FUNCTION_NAME: vFunCode,
+            SYSTEM_FUNCTION_NAME: "BSUDSC",
+            COMPONENT_INFO_TYPE: "DATA_ONLY"
+        };
+        var response = EAM.Ajax.request({
+                url: "LOVPOP",
+                params: requestData
+            });
+        var vrecords = response.responseData.pageData.grid.GRIDRESULT.GRID.DATA;
+        var vdata = [];
+        for (var i = 0; i < vrecords.length; i++) {
+            vdata.push({
+                "abbr": vrecords[i].lvwocstatuscode,
+                "name": vrecords[i].lvwocstatustext
+            });
+        }
+        var statuses = Ext.create('Ext.data.Store', {
+                fields: ['abbr', 'name'],
+                data: vdata
+            });
+        vStatusDropDown = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: 'Status',
+                id: 'vStatusDropDown',
+                store: statuses,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'abbr',
+                listeners: {
+                    'select': function (combo, records, value) {
+                        vcurrentRecord = records.data.abbr;
+                        var vPageMode = formPanel.getFldValue("pagemode");
+                        if (vPageMode === "display") {
+                            formPanel.setFldValue("wspf_10_ctl_status", "-", true);
+                        } else if (vPageMode === "view") {
+                            formPanel.setFldValue("wspf_10_ctl_status", vcurrentRecord, true);
+                        }
+                        if (vPageMode === "view") {
+                            var vStatusFld = formPanel.getFld("wspf_10_ctl_status");
+                            var vOldRStatus = combo.originalValue;
+                            var vNewRStatus = combo.value;
+                        }
+                        var vStatusFld = formPanel.getFld("wspf_10_ctl_status");
+                        if (EAM.getApplication().designerMode === false) {
+                            handleStatusChange(formPanel, "RAPID");
+                        }
+                    }
+                }
+            });
+        var vStatusFld = formPanel.getFld("wspf_10_ctl_status");
+        var vStatusFldContainer = vStatusFld.up('container');
+        var vStatusFieldIndx = vStatusFldContainer.items.keys.indexOf(vStatusFld.id);
+        vStatusFldContainer.add(+vStatusFieldIndx + 1, vStatusDropDown);
+        vStatusDropDown.setValue(vdata[0].abbr);
+        vStatusDropDown.setStore(statuses);
+        setStore(formPanel);
+        maintainFormPanelState(formPanel);
+    } catch (err) {
+        debug && console.log("#Error in makeStatusDropDown(), err :" + err);
+    }
+
+};
+/*external function to set field state based on status*/
+function handleStatusChange(formPanel, changeMode) {
+    try {
+        debug && console.log("handleStatusChange function called");
+        var vStatus = formPanel.getFldValue("wspf_10_ctl_status");
+        var a = formPanel.getForm().getFieldsAndButtons();
+        var vPageMode = formPanel.getFldValue("pagemode");
+        var h = {};
+        if (changeMode === "DELAYED") {
+            if (vStatusDropDown !== "") {
+                vStatusDropDown.setReadOnly(false);
+            }
+            var userGroup = getUserGroup();
+            var vgenpoButton = formPanel.down("button[name=generatepoid]");
+            vgenpoButton.setDisabled(true);
+		    if (userGroup === "VLOOT-MAN" && vStatus === "WCC") {
+                if (Ext.isEmpty(formPanel.getFldValue("wspf_10_ctl_po"))) {
+                    vgenpoButton.setDisabled(false);
+                }
+            }
+            if ((userGroup === "SUPPLIER" && vStatus == "SC")
+                 || vStatus == "WCC") {
+                if (vStatusDropDown !== "") {
+                    vStatusDropDown.setReadOnly(true);
+                }
+                for (var i = 0; i < a.keys.length; i++) {
+                    var c = a.keys[i];
+                    if (c === 'wspf_10_ctl_status') {
+                        continue;
+                    }
+                    h[c] = "protected";
+
+                }
+            }
+            if (formPanel.getFldValue("wspf_10_ctl_seq") && vPageMode == 'view') {
+                h['wspf_10_ctl_org'] = 'protected';
+            }
+            if (vPageMode === "view") {
+                h.wspf_10_ctl_ven = "protected";
+                //h.wspf_10_ovr_date = "required";
+            }
+            //EAM.Builder.setFieldState(h, formPanel.getForm().getFields());
+        }
+        /* if (changeMode === "RAPID") {
+        if (vStatus === "A") {
+        h = {
+        'wspf_10_ovr_approver': "required",
+        'wspf_10_ovr_remover': "protected"
+        };
+        }
+        if (vStatus === "D") {
+        h = {
+        'wspf_10_ovr_remover': "required",
+        'wspf_10_ovr_approver': "protected"
+        }
+        }
+        }*/
+        EAM.Builder.setFieldState(h, formPanel.getForm().getFields());
+    } catch (err) {
+        debug && console.log("error in handleStatusChange : " + err);
+    }
+};
+
+function setStore(formPanel) {
+    try {
+        if (vStatusDropDown !== "") {
+            var vStatus = "-";
+            if (!Ext.isEmpty(formPanel.getFldValue("wspf_10_ctl_status"))) {
+                vStatus = formPanel.getFldValue("wspf_10_ctl_status");
+            }
+            var vUser = EAM.AppData.getUser();
+            var vOrg = formPanel.getFldValue("wspf_10_ctl_org");
+            var vCode = formPanel.getFldValue("wspf_10_ctl_code");
+            if (!vOrg) {
+                vOrg = EAM.AppData.getInstallParams().get('userorg');
+            }
+            var vPageMode = formPanel.getFldValue("pagemode");
+            var action = "";
+            if (vPageMode === "display") {
+                action = 'I';
+            } else {
+                action = 'U';
+            }
+            var requestData = {
+                GRID_NAME: "LVWOCSTATUS",
+                GRID_TYPE: "LOV",
+                REQUEST_TYPE: "LOV.HEAD_DATA.STORED",
+                LOV_ALIAS_NAME_1: "parameter.user",
+                LOV_ALIAS_VALUE_1: vUser,
+                LOV_ALIAS_TYPE_1: "text",
+                LOV_ALIAS_NAME_2: "parameter.status",
+                LOV_ALIAS_VALUE_2: vStatus,
+                LOV_ALIAS_TYPE_2: "text",
+                LOV_ALIAS_NAME_3: "parameter.action",
+                LOV_ALIAS_VALUE_3: action,
+                LOV_ALIAS_TYPE_3: "text",
+                LOV_ALIAS_NAME_6: "parameter.organization",
+                LOV_ALIAS_VALUE_6: vOrg,
+                LOV_ALIAS_TYPE_6: "text",
+                CURRENT_TAB_NAME: vTabName,
+                USER_FUNCTION_NAME: vFunCode,
+                SYSTEM_FUNCTION_NAME: "BSUDSC",
+                COMPONENT_INFO_TYPE: "DATA_ONLY"
+            };
+            var response = EAM.Ajax.request({
+                    url: "LOVPOP",
+                    params: requestData
+                });
+            var vrecords = response.responseData.pageData.grid.GRIDRESULT.GRID.DATA;
+            var vdata = [];
+            for (var i = 0; i < vrecords.length; i++) {
+                vdata.push({
+                    "abbr": vrecords[i].lvwocstatuscode,
+                    "name": vrecords[i].lvwocstatustext
+                });
+            }
+            var statuses = Ext.create('Ext.data.Store', {
+                    fields: ['abbr', 'name'],
+                    data: vdata
+                });
+            if (vdata.length > 0) {
+                vStatusDropDown.setValue(vdata[0].abbr);
+                vStatusDropDown.setStore(statuses);
+            }
+        }
+    } catch (e) {
+        debug && console.log('Error in Set Store : ' + e);
+    }
+
+};
+
+function setStatus(a, formPanel) {
+    try {
+        var vPageMode = formPanel.getFldValue("pagemode");
+        if (a.isReset === true) {
+            vResetCalled = true;
+        }
+        if (vPageMode === "display" && Ext.isEmpty(formPanel.getFldValue("wspf_10_ctl_status"))) {
+            formPanel.setFldValue("wspf_10_ctl_status", "-", true);
+        }
+        /*if (vPageMode === "view" && Ext.isEmpty(formPanel.getFldValue("wspf_10_ctl_status"))) {
+        formPanel.setFldValue("wspf_10_ctl_status", "I", true);
+        }*/
+        if (EAM.getApplication().designerMode === false) {
+            handleStatusChange(formPanel, "DELAYED");
+        }
+        setStore(formPanel);
+        maintainFormPanelState(formPanel);
+    } catch (err) {
+        debug && console.log("Error in setStatus(): " + err);
+    }
+};
+function maintainFormPanelState(formPanel) {
+    var items = formPanel.getForm().getFields().items,
+    i = 0,
+    len = items.length;
+    for (; i < len; i++) {
+        var c = items[i];
+        if (c.mixins && c.mixins.field && typeof c.mixins.field['initValue'] == 'function') {
+            c.mixins.field.initValue.apply(c);
+            c.wasDirty = false;
+        }
+    }
+};
+
+function getUserGroup() {
+    var requestData = {
+        GRID_NAME: "QUUGRP",
+        GRID_TYPE: "LOV",
+        REQUEST_TYPE: "LOV.HEAD_DATA.STORED",
+        LOV_ALIAS_NAME_1: "parameter.usrcode",
+        LOV_ALIAS_VALUE_1: EAM.AppData.getUser(),
+        LOV_ALIAS_TYPE_1: "text",
+        CURRENT_TAB_NAME: "HDR",
+        USER_FUNCTION_NAME: "QUUGRP",
+        SYSTEM_FUNCTION_NAME: "BSUDSC",
+        COMPONENT_INFO_TYPE: "DATA_ONLY"
+    };
+
+    var response = EAM.Ajax.request({
+            url: "LOVPOP",
+            params: requestData
+        });
+    return response.responseData.pageData.grid.GRIDRESULT.GRID.DATA[0].usrgroup;
+};
+
+function hdr_overrideSuplov(a) {
+    try {
+        debug && console.log('hdr_overrideSuplov called');
+        var pFormPanel = a.formPanel;
+        var vLookUpLOV = {
+            lovName: 'LVWOSUPP',
+            returnFields: {
+                'wspf_10_ctl_ven': 'lvwosuppcomcode'
+            }
+        };
+        a.lookupLOV = vLookUpLOV;
+        a.validateLOV = vLookUpLOV;
+        a.extraLOVParams = null;
+        a.isQueryCode = false;
+        a.fetchMoreRequestType = null;
+        a.validateOnBlur = true;
+        a.validateOnChange = true;
+        a.useBeforeValidateLOV = false;
+        a.dataspyConfig = {
+            hideDataspyList: !1,
+            hideEditButton: !1,
+            hideExcelButton: !1,
+            noFilterRow: !1,
+            dataspyXType: 'dataspy'
+        };
+    } catch (err) {
+        debug && console.log('error in hdr_overrideSuplov : ' + err);
+    }
+};
+
+function hdr_overrideorglov(a) {
+    try {
+        debug && console.log('hdr_overrideorglov called');
+        var pFormPanel = a.formPanel;
+        var orgfld = pFormPanel.getFld("wspf_10_ctl_org");
+        var vLookUpLOV = {
+            lovName: 'LVORG',
+            inputVars: {
+                'parameter.mos': '+'
+            },
+            returnFields: {
+                'wspf_10_ctl_org': 'organization'
+            }
+        };
+        a.lookupLOV = vLookUpLOV;
+        a.validateLOV = vLookUpLOV;
+        a.extraLOVParams = null;
+        a.isQueryCode = false;
+        a.fetchMoreRequestType = null;
+        a.validateOnBlur = true;
+        a.validateOnChange = true;
+        a.useBeforeValidateLOV = false;
+        a.dataspyConfig = {
+            hideDataspyList: !1,
+            hideEditButton: !1,
+            hideExcelButton: !1,
+            noFilterRow: !1,
+            dataspyXType: 'dataspy'
+        };
+    } catch (err) {
+        debug && console.log('error in hdr_overrideorglov : ' + err);
+    }
+};
+
+function copyHandler(formPanel) {
+    try {
+
+        formPanel.setFldValue("wspf_10_ctl_seq", "<Auto-Generated>", true);
+        formPanel.setFldValue("wspf_10_ctl_status", null, true);
+        if (vStatusDropDown.readOnly === true) {
+            vStatusDropDown.setReadOnly(false);
+        }
+        // vStatusDropDown.setValue("I");
+        vCopyClicked = false;
+    } catch (err) {
+        debug && console.log("copyHandler err :" + err);
+    }
+};
+function clearAllFields(formPanel) {
+    try {
+        debug && console.log("clearAllFields function called ");
+        var a = formPanel.getForm().getFieldsAndButtons();
+        for (var i = 0; i < a.keys.length; i++) {
+            var c = a.keys[i];
+            /*if(c === 'wspf_10_ctl_status'){
+            continue;
+            }*/
+            formPanel.setFldValue(c, null);
+
+        }
+
+    } catch (err) {
+        debug && console.log("clearAllFields err :" + err);
+    }
+};
+
+function toInitializeCustomTab(formPanel) {
+    try {
+        var gridRes = EAM.Ajax.request({
+                url: "BSUDSC.HDR",
+                params: {
+                    SYSTEM_FUNCTION_NAME: 'BSUDSC',
+                    USER_FUNCTION_NAME: 'KUPRCS',
+                    CURRENT_TAB_NAME: 'HDR',
+                    wspf_10_prs_id: 'KUPRCS',
+                    wspf_10_prs_status: 'NEW',
+                    wspf_10_prs_screen: 'KUPRCS'
+                },
+                async: false,
+            });
+    } catch (err) {
+        EAM.Utils.debugMessage(err);
+    }
+};
+
+function getAutoSequence() {
+    try {
+        var seqRequestData = {
+            GRID_NAME: "LVCUSTMAXSEQ",
+            GRID_TYPE: "LOV",
+            REQUEST_TYPE: "LOV.HEAD_DATA.STORED",
+            LOV_ALIAS_NAME_1: "parameter.entity",
+            LOV_ALIAS_VALUE_1: 'KUPRCS',
+            LOV_ALIAS_TYPE_1: "text",
+            CURRENT_TAB_NAME: "HDR",
+            USER_FUNCTION_NAME: "KUPRCS",
+            SYSTEM_FUNCTION_NAME: "BSUDSC",
+            COMPONENT_INFO_TYPE: "DATA_ONLY"
+        };
+
+        var seqResponse = EAM.Ajax.request({
+                url: "LOVPOP",
+                params: seqRequestData
+            });
+        var vseqRecords = seqResponse.responseData.pageData.grid.GRIDRESULT.GRID.DATA;
+        if (!Ext.isEmpty(vseqRecords) || vseqRecords != "undefined") {
+            var vSequence = vseqRecords[0].lvcustmaxseq;
+            if (vSequence === null || vSequence === "null") {
+                EAM.Messaging.showError({
+                    msg: "Error in Generating Sequence.Please try Again !"
+                });
+                return false;
+            }
+            return vSequence;
+        }
+    } catch (err) {
+        EAM.Utils.debugMessage(err);
+    }
+};
+
+function insertRecord(formPanel) {
+    try {
+        var vSeqNum = getAutoSequence();
+        var requestData = {
+            'SYSTEM_FUNCTION_NAME': 'BSUDSC',
+            'USER_FUNCTION_NAME': 'KUPRCS',
+            'CURRENT_TAB_NAME': 'HDR',
+            'CHECK_CF_CHANGEFLAG': 'true',
+            'wspf_10_prs_id': vSeqNum,
+            'wspf_10_prs_status': 'NEW',
+            'wspf_10_prs_usermessage': '',
+            'wspf_10_prs_object': 'QBZ_AUTOPO',
+            'wspf_10_prs_param1': formPanel.getFldValue("wspf_10_ctl_org"),
+            'wspf_10_prs_screen': 'OUWOCF',
+            'wspf_10_prs_param2': formPanel.getFldValue("wspf_10_ctl_seq"),
+            'wspf_10_prs_param3': 'WOC',
+            'webservicepromptcode': 'KUPRCS',
+            'processaction': 'insert',
+            'pagemode': 'display',
+            'PKID': vSeqNum,
+            'recordid': '0',
+            'can_insert': '',
+            'can_delete': '',
+            'can_update': ''
+        };
+
+        var response = EAM.Ajax.request({
+                url: "BSUDSC.HDR.insertrecord",
+                params: requestData,
+                async: false
+            });
+        var vSuccessFlag = response.responseData.pageData.success;
+        if (vSuccessFlag === true) {
+            EAM.Messaging.showConfirmation("PO Generated successfully !");
+        } else {
+            EAM.Messaging.showConfirmation("Error in generating PO. Please try again!");
+        }
+    } catch (err) {
+        EAM.Utils.debugMessage(err);
+    }
+};

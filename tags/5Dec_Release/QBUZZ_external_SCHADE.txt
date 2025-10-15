@@ -1,0 +1,618 @@
+/*
+-- -------------------------------------------------------------------------------
+--
+-- Copyright © 2022 by Spectades BV
+--
+-- Filename    : QBUZZ_external_schade.txt
+--
+-- Description : Extensible Framework JavaScript SCHADE - New Tab on SCHADE
+-
+-- Product     : EAM             Release : 11.7
+--
+-- Author      :MCT
+--
+-- CHANGE HISTORY
+--
+-- 0001 25-11-2022 - MCT - SCHADE - New Tab on SCHADE i.e., Additional Costs.
+-- 0002 28-11-2022 - SPC-295 Override Costcode lookup and Implement line no on newly created tab.
+-- 0003 02-12-2022 - SPC-295 Description of problemcode should populate on Recordview.
+-- -------------------------------------------------------------------------------
+ */
+
+var debug = true;
+var vFunCode = "SCHADE";
+var vTabName = "U1";
+var vOrg = "";
+var userFunctionTab = 'U1';
+var userFunction = 'SCHADE';
+var newRecord=false;
+var vDescrip="";
+
+Ext.define('EAM.custom.external_schade', {
+    extend: 'EAM.custom.AbstractExtensibleFramework',
+    getSelectors: function () {
+        thisContext = this;
+        return {
+
+            '[extensibleFramework] [tabName=U1]': {
+                afterrender: function (a, b) {
+                    if (a.userFunction === vFunCode && a.tabName === vTabName) {
+                        try {
+                            debug && console.log('afterrender called');
+                            var formPanel = this.getFormPanel();
+                            setFldWidth(formPanel);
+                            //debugger;
+                            var headerStatus = formPanel.screen._listView.activeRecord.data.rstatus;
+                            var userGroup = getUserGroup();
+                            debug && console.log('headerstatus value is ' + headerStatus);
+                            debug && console.log('UserGroup is ' + userGroup);
+
+                            if (headerStatus === "C" || headerStatus === "CANC") {
+                                protectAllFields(userFunctionTab, formPanel);
+                                //return;
+                            } else {
+                                resetButtons(a.tabName, formPanel);
+                                setU1DefaultValues(formPanel, "");
+                            }
+
+                        } catch (err) {
+                            debug && console.log("#afterrender: " + err);
+                        }
+                    }
+                },
+                afterloadrecord: function (a, b, c) {
+                    EAM.Utils.debugMessage("afterloadrecord function called !");
+                    var formPanel = this.getFormPanel();
+                    var headerStatus = formPanel.screen._listView.activeRecord.data.rstatus;
+
+                    var userGroup = getUserGroup();
+
+                    if (headerStatus === "C" || headerStatus === "CANC") {
+                        protectAllFields(userFunctionTab, formPanel);
+                        //return;
+                    } else {
+                        resetButtons(a.tabName, formPanel);
+                        setU1DefaultValues(formPanel, "");
+
+                    }
+                },
+                afterrecordchange: function (a, b) {
+                    EAM.Utils.debugMessage("afterrecordchange function called !");
+                    var formPanel = this.getFormPanel();
+
+                    var headerStatus = formPanel.screen._listView.activeRecord.data.rstatus;
+                    var userGroup = getUserGroup();
+
+                    if (headerStatus === "C" || headerStatus === "CANC") {
+                        protectAllFields(userFunctionTab, formPanel);
+                        //return;
+                    } else {
+                        resetButtons(a.tabName, formPanel);
+                        setU1DefaultValues(formPanel, "");
+
+                    }
+
+                },
+                afternewrecord: function (a) {
+                    EAM.Utils.debugMessage("afterrender function called !");
+                    var formPanel = this.getFormPanel();
+                    var formPanel = this.getFormPanel();
+
+                    var headerStatus = formPanel.screen._listView.activeRecord.data.rstatus;
+                    var userGroup = getUserGroup();
+
+                    if (headerStatus === "C" || headerStatus === "CANC") {
+                        protectAllFields(userFunctionTab, formPanel);
+                        //return;
+                    } else {
+                        resetButtons(a.tabName, formPanel);
+                        setU1DefaultValues(formPanel, "");
+
+                    }
+
+                },
+                afterreset: function (a) {
+                    EAM.Utils.debugMessage("afterrender function called !");
+                    var formPanel = this.getFormPanel();
+                    var formPanel = this.getFormPanel();
+
+                    var headerStatus = formPanel.screen._listView.activeRecord.data.rstatus;
+                    var userGroup = getUserGroup();
+
+                    if (headerStatus === "C" || headerStatus === "CANC") {
+                        protectAllFields(userFunctionTab, formPanel);
+                        //return;
+                    } else {
+                        resetButtons(a.tabName, formPanel);
+                        setU1DefaultValues(formPanel, "");
+
+                    }
+
+                },
+                aftersaverecord: function (a, b, c) {
+                    EAM.Utils.debugMessage("aftersaverecord function called !");
+                    var formPanel = this.getFormPanel();
+                    var formPanel = this.getFormPanel();
+
+                    var headerStatus = formPanel.screen._listView.activeRecord.data.rstatus;
+                    var userGroup = getUserGroup();
+
+                    if (headerStatus === "C" || headerStatus === "CANC") {
+                        protectAllFields(userFunctionTab, formPanel);
+                        //return;
+                    } else {
+                        resetButtons(a.tabName, formPanel);
+                        setU1DefaultValues(formPanel, "");
+
+                    }
+
+                },
+                afterdestroyrecord: function (a, b, c) {
+                    EAM.Utils.debugMessage("aftersaverecord function called !");
+                    var formPanel = this.getFormPanel();
+                    var formPanel = this.getFormPanel();
+
+                    var headerStatus = formPanel.screen._listView.activeRecord.data.rstatus;
+                    var userGroup = getUserGroup();
+
+                    if (headerStatus === "C" || headerStatus === "CANC") {
+                        protectAllFields(userFunctionTab, formPanel);
+                        //return;
+                    } else {
+                        resetButtons(a.tabName, formPanel);
+                        setU1DefaultValues(formPanel, "");
+
+                    }
+
+                },
+                before_eam_beforesaverecord: function (a, b, c) {
+                    if (a.userFunction === vFunCode && a.tabName === vTabName) {
+                        EAM.Utils.debugMessage("before_eam_beforesaverecord function called !");
+                        var formPanel = this.getFormPanel();
+                        setLineNo(formPanel);
+                    }
+                }
+
+            },
+            '[extensibleFramework] [tabName=HDR]': {
+                afterrecordchange: function (a, b) {
+
+                    try {
+
+                        debug && console.log('afterrecordchange called');
+                        var formPanel = this.getFormPanel();
+						
+                        vOrg = formPanel.getFldValue("organization");
+						debug && console.log('organization value is '+ vOrg);
+                        var vDescription = formPanel.getFldValue("casedescription");
+                        if (vDescription == "") {
+                            formPanel.setFldValue("casedescription", "SCHADEDOSSIER", true);
+                        }
+
+                    } catch (err) {
+                        debug && console.log("#after recordchange: " + err);
+                    }
+
+                },
+                aftersaverecord: function (a, b) {
+
+                    try {
+
+                        debug && console.log('aftersaverecord called');
+                        var formPanel = this.getFormPanel();
+                        vOrg = formPanel.getFldValue("organization");
+
+                    } catch (err) {
+                        debug && console.log("aftersaverecord: " + err);
+                    }
+
+                },
+				afternewrecord: function (a, b) {
+                    debug && console.log("after new record clicked");
+                   newRecord=true;
+                },
+				afterrender: function (a, b) {
+					debug && console.log("afterrender fn called");
+					newRecord=true;
+				}
+
+            },
+            '[extensibleFramework] [tabName=U1] lovfield[name=wspf_10_cos_costcode]': {
+                beforetriggerclick: function (field, event) {
+                    try {
+                        var formPanel = this.getFormPanel();
+                        EAM.Utils.debugMessage("beforetriggerclick of wspf_10_cos_costcode called !");
+                        overridelovfield(formPanel, field);
+                    } catch (err) {
+                        EAM.Utils.debugMessage("Error in costcode lovfield " + err);
+                    }
+                }
+
+            },
+            '[extensibleFramework] [tabName=HDR] lovfield[name=problemcode]': {
+                beforetriggerclick: function (field, event) {
+                    try {
+                        var formPanel = this.getFormPanel();
+                        EAM.Utils.debugMessage("beforetriggerclick of problemcode called !");
+                        overridelovfield(formPanel, field);
+
+                    } catch (err) {
+                        EAM.Utils.debugMessage("Error in problemcode lovfield " + err);
+                    }
+                },
+                customonblur: function (field) {
+                    try {
+                        var formPanel = this.getFormPanel();
+
+                        EAM.Utils.debugMessage("customonblur fn called !");
+                        var vProblemCode = formPanel.getFldValue("problemcode");
+                        EAM.Utils.debugMessage("problem code value is " + vProblemCode);
+                        if (vProblemCode === "") {
+                            formPanel.setFldValue("casedescription", "SCHADEDOSSIER", true);
+                        } else {
+                            overridelovfield(formPanel, field);
+                        }
+
+                    } catch (err) {
+                        EAM.Utils.debugMessage("Error in problemcode customonblur " + err);
+                    }
+
+                }
+            },
+            '[extensibleFramework] [tabName=HDR] lovfield[name=organization]': {
+                customonblur: function (field) {
+                    try {
+                        var formPanel = this.getFormPanel();
+
+                        EAM.Utils.debugMessage("customonblur fn called !");
+                        var vProblemCode = formPanel.getFldValue("problemcode");
+                        EAM.Utils.debugMessage("problem code value is " + vProblemCode);
+                        if (vProblemCode === "") {
+                            formPanel.setFldValue("casedescription", "SCHADEDOSSIER", true);
+                        } 
+						/*else {
+							newRecord=true;
+                            overridelovfield(formPanel, field);
+                        }*/
+
+                    } catch (err) {
+                        EAM.Utils.debugMessage("Error in problemcode customonblur " + err);
+                    }
+
+                }
+            }
+        }
+    }
+});
+
+function resetButtons(tabName, formPanel) {
+    var a = formPanel.getForm().getFieldsAndButtons();
+    if (tabName === 'U1') {
+
+        if (formPanel.down("button[action=deleteRec]")) {
+            formPanel.down("button[action=deleteRec]").setDisabled(false);
+        }
+        if (formPanel.down("button[action=newRec]")) {
+            formPanel.down("button[action=newRec]").setDisabled(false);
+        }
+        if (formPanel.down("button[action=saveRec]")) {
+            formPanel.down("button[action=saveRec]").setDisabled(false);
+        }
+        if (formPanel.down("button[action=clearRec]")) {
+            formPanel.down("button[action=clearRec]").setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#addeditcomments')[0]) {
+            Ext.ComponentQuery.query('#addeditcomments')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#viewpmactivitycomments')[0]) {
+            Ext.ComponentQuery.query('#viewpmactivitycomments')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#adddeferredactivity')[0]) {
+            Ext.ComponentQuery.query('#adddeferredactivity')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#rellocatedirectmaterial')[0]) {
+            Ext.ComponentQuery.query('#rellocatedirectmaterial')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#createlaborreq')[0]) {
+            Ext.ComponentQuery.query('#createlaborreq')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#createwarrantyclaim')[0]) {
+            Ext.ComponentQuery.query('#createwarrantyclaim')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#viewtaskinstructions')[0]) {
+            Ext.ComponentQuery.query('#viewtaskinstructions')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#adddocumotodetails')[0]) {
+            Ext.ComponentQuery.query('#adddocumotodetails')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#importactivities')[0]) {
+            Ext.ComponentQuery.query('#importactivities')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#linearlocationdetails')[0]) {
+            Ext.ComponentQuery.query('#linearlocationdetails')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#submit')[0]) {
+            Ext.ComponentQuery.query('#submit')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#clear')[0]) {
+            Ext.ComponentQuery.query('#clear')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#deleteactivity')[0]) {
+            Ext.ComponentQuery.query('#deleteactivity')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('#newactivity')[0]) {
+            Ext.ComponentQuery.query('#newactivity')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('common_comments button[action=destroy]')[0]) {
+            Ext.ComponentQuery.query('common_comments button[action=destroy]')[0].setDisabled(false);
+        }
+        if (Ext.ComponentQuery.query('common_comments button[action=newComment]')[0]) {
+            Ext.ComponentQuery.query('common_comments button[action=newComment]')[0].setDisabled(false);
+        }
+
+    }
+};
+
+function protectAllFields(tabName, formPanel) {
+    var a = formPanel.getForm().getFieldsAndButtons();
+
+    if (tabName === 'U1') {
+
+        var h = {};
+
+        for (var i = 0; i < a.keys.length; i++) {
+            var c = a.keys[i];
+            //if (tabName === 'HDR' && c === 'workorderstatus') {
+            //    continue;
+            //}
+            h[c] = "protected";
+
+        }
+        EAM.Builder.setFieldState(h, formPanel.getForm().getFields());
+
+        if (formPanel.down("button[action=deleteRec]")) {
+            formPanel.down("button[action=deleteRec]").setDisabled(true);
+        }
+        if (formPanel.down("button[action=newRec]")) {
+            formPanel.down("button[action=newRec]").setDisabled(true);
+        }
+        if (formPanel.down("button[action=saveRec]")) {
+            formPanel.down("button[action=saveRec]").setDisabled(true);
+        }
+        if (formPanel.down("button[action=clearRec]")) {
+            formPanel.down("button[action=clearRec]").setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#addeditcomments')[0]) {
+            Ext.ComponentQuery.query('#addeditcomments')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#viewpmactivitycomments')[0]) {
+            Ext.ComponentQuery.query('#viewpmactivitycomments')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#adddeferredactivity')[0]) {
+            Ext.ComponentQuery.query('#adddeferredactivity')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#rellocatedirectmaterial')[0]) {
+            Ext.ComponentQuery.query('#rellocatedirectmaterial')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#createlaborreq')[0]) {
+            Ext.ComponentQuery.query('#createlaborreq')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#createwarrantyclaim')[0]) {
+            Ext.ComponentQuery.query('#createwarrantyclaim')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#viewtaskinstructions')[0]) {
+            Ext.ComponentQuery.query('#viewtaskinstructions')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#adddocumotodetails')[0]) {
+            Ext.ComponentQuery.query('#adddocumotodetails')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#importactivities')[0]) {
+            Ext.ComponentQuery.query('#importactivities')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#linearlocationdetails')[0]) {
+            Ext.ComponentQuery.query('#linearlocationdetails')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#submit')[0]) {
+            Ext.ComponentQuery.query('#submit')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#clear')[0]) {
+            Ext.ComponentQuery.query('#clear')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#deleteactivity')[0]) {
+            Ext.ComponentQuery.query('#deleteactivity')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('#newactivity')[0]) {
+            Ext.ComponentQuery.query('#newactivity')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('common_comments button[action=destroy]')[0]) {
+            Ext.ComponentQuery.query('common_comments button[action=destroy]')[0].setDisabled(true);
+        }
+        if (Ext.ComponentQuery.query('common_comments button[action=newComment]')[0]) {
+            Ext.ComponentQuery.query('common_comments button[action=newComment]')[0].setDisabled(true);
+        }
+
+    } else {
+        EAM.Builder.setFieldState({
+            'pagelayout': 'optional'
+        }, a)
+    }
+};
+
+function setLineNo(formPanel) {
+    //Setting next sequence no on TAB
+    var vWoSeq = getSequenceNo(formPanel.getFldValue("wspf_10_cos_case"), formPanel.screen._listView.activeRecord.data.organization);
+    EAM.Utils.debugMessage("sequence No " + vWoSeq);
+    if (vWoSeq === 0) {
+        if (Ext.isEmpty(formPanel.getFldValue("wspf_10_cos_line"))) {
+
+            formPanel.setFldValue("wspf_10_cos_line", 10, true);
+        }
+    } else {
+        if (Ext.isEmpty(formPanel.getFldValue("wspf_10_cos_line"))) {
+            formPanel.setFldValue("wspf_10_cos_line", +vWoSeq + 10, true);
+        }
+    }
+};
+function getSequenceNo(vCaseCode, caseOrganization) {
+    try {
+        var vRequest = {
+            SYSTEM_FUNCTION_NAME: "BSUDSC",
+            USER_FUNCTION_NAME: userFunction,
+            CURRENT_TAB_NAME: userFunctionTab,
+            casecode: vCaseCode,
+            organization: caseOrganization,
+            GRID_NAME: userFunction + '_' + userFunctionTab,
+            ADDON_SORT_ELEMENT_ALIAS_NAME: 'wspf_10_cos_line',
+            ADDON_SORT_ELEMENT_TYPE: 'DESC',
+            COMPONENT_INFO_TYPE: 'DATA_ONLY',
+        };
+        var response = EAM.Ajax.request({
+            url: "BSUDSC.TAB.xmlhttp",
+            params: vRequest
+        });
+        var vSeq = "";
+        //debugger;
+        var vrecords = response.responseData.pageData.grid.GRIDRESULT.GRID.DATA;
+        if (vrecords.length > 0) {
+            vSeq = vrecords[0].wspf_10_cos_line
+        } else if (vrecords.length === 0) {
+            vSeq = 0;
+        }
+        return vSeq;
+    } catch (err) {
+        EAM.Utils.debugMessage("getSequenceNo err :" + err);
+    }
+
+};
+
+function setU1DefaultValues(formPanel, pAction) {
+    EAM.Utils.debugMessage("setU1DefaultValues function called !");
+    //debugger;
+    var todayDate = new Date();
+    todayDate = Ext.Date.format(todayDate, 'm/d/Y H:i');
+    console.log("todayDate: " + todayDate);
+    formPanel.setFldValue("wspf_10_cos_date", todayDate, true);
+
+    maintainFormPanelState(formPanel);
+};
+
+function maintainFormPanelState(formPanel) {
+    var items = formPanel.getForm().getFields().items,
+    i = 0,
+    len = items.length;
+    for (; i < len; i++) {
+        var c = items[i];
+        if (c.mixins && c.mixins.field && typeof c.mixins.field['initValue'] == 'function') {
+            c.mixins.field.initValue.apply(c);
+            c.wasDirty = false;
+        }
+    }
+};
+
+function getUserGroup() {
+    var requestData = {
+        GRID_NAME: "QUUGRP",
+        GRID_TYPE: "LOV",
+        REQUEST_TYPE: "LOV.HEAD_DATA.STORED",
+        LOV_ALIAS_NAME_1: "parameter.usrcode",
+        LOV_ALIAS_VALUE_1: EAM.AppData.getUser(),
+        LOV_ALIAS_TYPE_1: "text",
+        CURRENT_TAB_NAME: "HDR",
+        USER_FUNCTION_NAME: "QUUGRP",
+        SYSTEM_FUNCTION_NAME: "BSUDSC",
+        COMPONENT_INFO_TYPE: "DATA_ONLY"
+    };
+
+    var response = EAM.Ajax.request({
+        url: "LOVPOP",
+        params: requestData
+    });
+    return response.responseData.pageData.grid.GRIDRESULT.GRID.DATA[0].usrgroup;
+};
+
+function setFldWidth(formPanel) {
+    try {
+        debug && console.log('setFldWidth() called');
+
+        var vLineNoFld = formPanel.getFld("wspf_10_cos_line");
+        var vAfasNoFld = formPanel.getFld("wspf_10_cos_afas");
+        var vDescFld = formPanel.getFld("wspf_10_cos_costdesc");
+
+        if (!Ext.isEmpty(vAfasNoFld)) {
+            vAfasNoFld.setWidth(vLineNoFld.getWidth());
+        }
+        if (!Ext.isEmpty(vDescFld)) {
+            vDescFld.setWidth(vLineNoFld.getWidth());
+        }
+
+    } catch (e) {
+        debug && console.log('Error in setFldWidth : ' + e);
+    }
+};
+
+function overridelovfield(pFormPanel, pField) {
+    try {
+        console.log('overridelovfield called');
+        if(newRecord === true){
+			var vOrganization = vOrg;
+            var vEquip = "";
+            var vClassgp = "";
+			
+		}else{
+         
+            var vOrganization = pFormPanel.screen._listView.activeRecord.data.organization;
+            var vEquip = pFormPanel.screen._listView.activeRecord.data.equipment;
+            var vClassgp = pFormPanel.screen._listView.activeRecord.data.orgoption_clgroup;
+        }
+
+        console.log(vOrganization + " " + vEquip + " " + vClassgp);
+
+        if (pField.name == 'wspf_10_cos_costcode') {
+            var vLookUpLOV = {
+                lovName: 'LVCSTC',
+                inputVars: {
+                    'control.org': vOrg
+
+                },
+                returnFields: {
+                    'wspf_10_cos_costcode': 'costcode'
+                }
+            };
+        } else if (pField.name == 'problemcode') {
+            var vLookUpLOV = {
+                lovName: 'LVRECO',
+                inputVars: {
+                    'param.objclass': " ",
+                    'param.objclassorg': " ",
+                    'parameter.equipment': vEquip,
+                    'parameter.equipmentorg': vOrganization,
+                    'param.clgroup': vClassgp,
+
+                },
+                returnFields: {
+                    'problemcode': 'problemcode',
+                    'casedescription': 'description'
+                }
+            };
+        }
+
+        pField.lookupLOV = vLookUpLOV;
+        pField.validateLOV = vLookUpLOV;
+        pField.extraLOVParams = null;
+        pField.isQueryCode = false;
+        pField.fetchMoreRequestType = null;
+        pField.validateOnBlur = true;
+        pField.validateOnChange = true;
+        pField.useBeforeValidateLOV = false;
+        pField.dataspyConfig = {
+            hideDataspyList: !1,
+            hideEditButton: !1,
+            hideExcelButton: !1,
+            noFilterRow: !1,
+            dataspyXType: 'dataspy'
+        };
+		newRecord=false;
+    } catch (err) {
+        console.log('error in overrideBaselovfield : ' + err);
+    }
+};

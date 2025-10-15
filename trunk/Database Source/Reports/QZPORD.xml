@@ -1,0 +1,212 @@
+<!--
+=========================================================================================
+ Filename     : QZPORD.xml
+              
+ Description  : Reports on Purchase Order for QBUZZ.
+
+ Product      : EAM               Release : 12.1                    Build  :
+
+ Author       : MCT
+
+ CHANGE HISTORY
+
+ 0001   29-11-2023 - MCT - SPC-439 -  Creation
+ 0002   06-12-2023 - MCT - SPC-455 -  replace two boliertexts with column values (COM_FREIGHTTERMS,COM_PAYMENTTERMS)
+=========================================================================================
+-->
+
+<report xmlns="http://developer.cognos.com/schemas/report/15.5/"           useStyleVersion="11.6" expressionLocale="en">
+				
+				<drillBehavior/>
+				<layouts>
+					<layout>
+						<reportPages>
+							<page name="Page1" refQuery="HeaderQuery">
+								<style>
+									<defaultStyles>
+										<defaultStyle refStyle="pg"/>
+									</defaultStyles>
+								<CSS value="border:1.5pt solid black"/></style>
+								<pageBody>
+									<style>
+										<defaultStyles>
+											<defaultStyle refStyle="pb"/>
+										</defaultStyles>
+									<CSS value="padding-right:0px;padding-left:0px"/></style>
+									<contents><table><style><CSS value="border-collapse:collapse;width:100%"/><defaultStyles><defaultStyle refStyle="tb"/><defaultStyle refStyle="GuidedLayoutMargin"/></defaultStyles></style><tableRows><tableRow><tableCells><tableCell><contents><image>
+			<dataSource>
+				
+			<dataItemValue refDataItem="D7ILOGO"/></dataSource>
+		<style><CSS value="width:180px;height:60px"/></style></image></contents><style><CSS value="width:33%;text-align:left;padding-left:2px"/></style></tableCell><tableCell colSpan="2"><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT005"/></dataSource><style><CSS value="font-family:Arial;font-size:26pt;color:#166CC3;padding-right:3px;font-weight:bold"/></style></textItem></contents><style><CSS value="width:33%;vertical-align:top;text-align:right;padding-top:15px"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell><tableCell colSpan="2"><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0023"/></dataSource></textItem></contents><style><CSS value="width:25%;text-align:left"/></style></tableCell><tableCell><contents><textItem><dataSource><staticValue>: </staticValue></dataSource></textItem></contents><style><CSS value="width:3%"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="ORD_DATE"/></dataSource></textItem></contents><style><CSS value="width:72%"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="text-align:left;padding-top:0px;padding-bottom:0px;padding-left:170px"/><defaultStyles><defaultStyle refStyle="GuidedLayoutTopPadding"/><defaultStyle refStyle="GuidedLayoutBottomPadding"/><defaultStyle refStyle="GuidedLayoutLeftPadding"/></defaultStyles></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0026"/></dataSource></textItem></contents><style><CSS value="padding-left:2px"/></style></tableCell><tableCell colSpan="2"><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0024"/></dataSource></textItem></contents><style><CSS value="width:25%;text-align:left"/></style></tableCell><tableCell><contents><textItem><dataSource><staticValue>: </staticValue></dataSource></textItem></contents><style><CSS value="width:3%"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="ORD_CODE"/></dataSource></textItem></contents><style><CSS value="width:72%"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="padding-top:0px;padding-bottom:0px;padding-left:170px"/><defaultStyles><defaultStyle refStyle="GuidedLayoutTopPadding"/><defaultStyle refStyle="GuidedLayoutBottomPadding"/><defaultStyle refStyle="GuidedLayoutLeftPadding"/></defaultStyles></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0027"/></dataSource></textItem></contents><style><CSS value="padding-left:2px"/></style></tableCell><tableCell colSpan="2"><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0025"/></dataSource></textItem></contents><style><CSS value="width:25%;text-align:left"/></style></tableCell><tableCell><contents><textItem><dataSource><staticValue>: </staticValue></dataSource></textItem></contents><style><CSS value="width:3%"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="ORD_REVISION"/></dataSource></textItem></contents><style><CSS value="width:72%"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="padding-top:0px;padding-bottom:0px;padding-left:170px"/><defaultStyles><defaultStyle refStyle="GuidedLayoutTopPadding"/><defaultStyle refStyle="GuidedLayoutBottomPadding"/><defaultStyle refStyle="GuidedLayoutLeftPadding"/></defaultStyles></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>  </staticValue></dataSource></textItem></contents></tableCell><tableCell colSpan="2"><contents><textItem><dataSource><staticValue>  </staticValue></dataSource></textItem></contents></tableCell></tableCells></tableRow></tableRows></table><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT006"/></dataSource></textItem></contents><style><CSS value="width:40%;font-weight:bold;background-color:#166CC3;text-align:center;color:white"/></style></tableCell><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="width:10%"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT007"/></dataSource></textItem></contents><style><CSS value="width:40%;font-weight:bold;background-color:#166CC3;text-align:center;color:white"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="width:40%"/></style></tableCell><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="width:10%"/></style></tableCell><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="width:40%"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="COM_DESC"/></dataSource></textItem></contents><style><CSS value="width:40%;padding-left:2px"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="ADR_TEXT"/></dataSource></textItem></contents><style><CSS value="width:40%;padding-left:2px"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="ADR_PHONE"/></dataSource></textItem></contents><style><CSS value="width:40%;padding-left:2px"/></style></tableCell></tableCells></tableRow></tableRows></table></contents></tableCell><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="width:10%"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="STOREADDRESS"/></dataSource></textItem></contents><style><CSS value="vertical-align:top;width:40%"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell></tableCells></tableRow></tableRows></table><table><style><CSS value="border-collapse:collapse;width:100%;margin-bottom:0px;margin-right:0px"/><defaultStyles><defaultStyle refStyle="tb"/><defaultStyle refStyle="GuidedLayoutMargin"/></defaultStyles></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT008"/></dataSource></textItem></contents><style><CSS value="width:33%;text-align:center;background-color:#166CC3;font-weight:bold;color:white"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT009"/></dataSource></textItem></contents><style><CSS value="width:33%;text-align:center;background-color:#166CC3;font-weight:bold;color:white"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0010"/></dataSource></textItem></contents><style><CSS value="width:33%;text-align:center;background-color:#166CC3;font-weight:bold;color:white"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="PER_DESC"/></dataSource></textItem></contents><style><CSS value="text-align:center;border-top:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid black"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="COM_FREIGHTTERMS"/></dataSource></textItem></contents><style><CSS value="text-align:center;border:1pt solid black"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="COM_PAYMENTTERMS"/></dataSource></textItem></contents><style><CSS value="text-align:center;border:1pt solid black"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell colSpan="3"><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="color:white"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell colSpan="3"><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0011"/></dataSource></textItem></contents><style><CSS value="text-align:center;background-color:#166CC3;font-weight:bold;color:white"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell colSpan="3"><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="padding-bottom:0px"/></style></tableCell></tableCells></tableRow></tableRows></table><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%;border-top:1pt solid black;border-bottom:1pt solid black"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0012"/></dataSource></textItem></contents><style><CSS value="width:27%;text-align:center;font-weight:bold;color:#166CC3"/></style></tableCell><tableCell><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0013"/></dataSource></textItem></contents><style><CSS value="text-align:center;padding-left:90px;font-weight:bold;color:#166CC3"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0014"/></dataSource></textItem></contents><style><CSS value="text-align:center;padding-left:90px;font-weight:bold;color:#166CC3"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="width:27%"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0015"/></dataSource></textItem></contents><style><CSS value="text-align:right;padding-right:60px;font-weight:bold;color:#166CC3"/></style></tableCell></tableCells></tableRow></tableRows></table><list horizontalPagination="true" name="List1" refQuery="DetailQuery">
+			
+			
+			
+			<noDataHandler>
+				<contents>
+					<block>
+						<contents>
+							<textItem>
+								<dataSource>
+									<staticValue>No Data Available</staticValue>
+								</dataSource>
+							</textItem>
+						</contents>
+						<style>
+							<CSS value="padding:16px;"/>
+						</style>
+					</block>
+				</contents>
+			</noDataHandler>
+			<style>
+				<CSS value="border-collapse:collapse;width:100%"/>
+				
+			<defaultStyles><defaultStyle refStyle="ls"/><defaultStyle refStyle="GuidedLayoutMargin"/></defaultStyles></style>
+		<listColumns><listColumn><listColumnTitle><style><CSS value="text-align:center;display:none"/></style><contents><textItem><dataSource><dataItemLabel refDataItem="ORL_EVENT"/></dataSource></textItem></contents></listColumnTitle><listColumnBody><style><CSS value="text-align:center;width:27%"/></style><contents><textItem><dataSource><dataItemValue refDataItem="ORL_EVENT"/></dataSource><style><CSS value="color:#166CC3"/></style></textItem></contents></listColumnBody></listColumn><listColumn><listColumnTitle><style><defaultStyles><defaultStyle refStyle="lt"/></defaultStyles><CSS value="text-align:center;display:none"/></style><contents/></listColumnTitle><listColumnBody><style><CSS value="text-align:center;width:27%;padding-left:90px"/></style><contents><textItem><dataSource><dataItemValue refDataItem="EVT_UDFCHAR41"/></dataSource><style><CSS value="color:#166CC3"/></style></textItem></contents></listColumnBody></listColumn><listColumn><listColumnTitle><style><defaultStyles><defaultStyle refStyle="lt"/></defaultStyles><CSS value="text-align:center;display:none"/></style><contents><textItem><dataSource><dataItemLabel refDataItem="TOTAL"/></dataSource></textItem></contents></listColumnTitle><listColumnBody><style><CSS value="text-align:right;width:45%;padding-right:5px"/></style><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="TOTAL"/></dataSource><style><CSS value="color:#166CC3"/></style></textItem></contents><style><CSS value="text-align:right"/></style></tableCell></tableCells></tableRow></tableRows></table></contents></listColumnBody></listColumn></listColumns><listOverallGroup><listFooter><listRows><listRow><rowCells><rowCell colSpan="2"><contents/><style><CSS value="text-align:center;background-color:white"/></style></rowCell><rowCell><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><singleton name="Singleton32" refQuery="HeaderQuery">
+			<contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0016"/></dataSource><style><CSS value="font-weight:bold;color:#166CC3"/></style></textItem></contents>
+		</singleton></contents><style><CSS value="text-align:left;width:60%;padding-left:95px"/></style></tableCell><tableCell><contents><repeater name="Repeater1" refQuery="Query1">
+			<contents><textItem><dataSource><dataItemValue refDataItem="SUBTOTAL"/></dataSource><style><CSS value="color:#166CC3"/></style></textItem></contents>
+		</repeater></contents><style><CSS value="text-align:right;width:40%;padding-right:5px"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="text-align:right;background-color:white;width:45%"/></style></rowCell></rowCells></listRow><listRow><rowCells><rowCell><contents/><style><CSS value="width:27%"/></style></rowCell><rowCell><contents/><style><CSS value="width:27%"/></style></rowCell><rowCell><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><singleton name="Singleton33" refQuery="HeaderQuery">
+			<contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0017"/></dataSource><style><CSS value="font-weight:bold"/></style></textItem></contents>
+		</singleton></contents><style><CSS value="text-align:left;width:60%;padding-left:95px"/></style></tableCell><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="ORL_TOTTAXAMOUNT"/></dataSource><style><CSS value="padding-right:3px;width:40%"/></style></textItem></contents><style><CSS value="text-align:right;width:50%;padding-right:3px"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="text-align:right;color:#166CC3;width:45%"/></style></rowCell></rowCells></listRow><listRow><rowCells><rowCell><contents/><style><CSS value="width:27%"/></style></rowCell><rowCell><contents/><style><CSS value="width:27%"/></style></rowCell><rowCell><contents/><style><CSS value="width:45%"/></style></rowCell></rowCells></listRow><listRow><rowCells><rowCell colSpan="2"><contents/><style><CSS value="background-color:white"/></style></rowCell><rowCell><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><singleton name="Singleton31" refQuery="HeaderQuery">
+			<contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0015"/></dataSource><style><CSS value="font-weight:bold;color:#166CC3"/></style></textItem></contents>
+		</singleton></contents><style><CSS value="width:60%;padding-left:95px"/></style></tableCell><tableCell><contents><repeater name="Repeater2" refQuery="Query1">
+			<contents><textItem><dataSource><dataItemValue refDataItem="SUBTOTAL"/></dataSource><style><CSS value="color:#166CC3"/></style></textItem></contents>
+		</repeater></contents><style><CSS value="width:40%;text-align:right;padding-right:5px"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="text-align:right;vertical-align:middle;background-color:white;width:45%"/></style></rowCell></rowCells></listRow></listRows></listFooter></listOverallGroup><masterDetailLinks><masterDetailLink><masterContext><dataItemContext refDataItem="ORD_CODE"/></masterContext><detailContext><parameterContext parameter="SEL_ORDER"/></detailContext></masterDetailLink></masterDetailLinks><sortList><sortItem refDataItem="ORL_EVENT"/></sortList></list><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>  </staticValue></dataSource></textItem></contents><style><CSS value="border-top:1.5pt solid black"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0018"/></dataSource></textItem></contents><style><CSS value="text-align:center;background-color:#166CC3;font-weight:bold;color:white"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents><style><CSS value="border-bottom:1pt solid black"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:100%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0019"/></dataSource></textItem></contents><style><CSS value="padding-left:2px;font-weight:bold;font-size:9pt"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0020"/></dataSource></textItem></contents><style><CSS value="padding-left:2px;font-weight:bold;font-size:9pt"/></style></tableCell></tableCells></tableRow></tableRows></table></contents><style><CSS value="padding-left:2px;border-bottom:1pt solid black"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><dataItemValue refDataItem="BTEXT0021"/></dataSource></textItem></contents><style><CSS value="text-align:center;background-color:#166CC3;font-weight:bold;color:white"/></style></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue> </staticValue></dataSource></textItem><textItem><dataSource><dataItemValue refDataItem="BTEXT0022"/></dataSource></textItem></contents><style><CSS value="padding-left:2px"/></style></tableCell></tableCells></tableRow></tableRows></table></contents>
+								</pageBody>
+							<pageHeader><contents/></pageHeader><pageFooter><contents/></pageFooter><XMLAttributes><XMLAttribute output="no" name="RS_legacyDrillDown" value="0"/></XMLAttributes></page>
+						</reportPages>
+					<promptPages><page name="PARAMETERS">
+			<pageHeader>
+				<contents>
+					<block>
+						<contents>
+							<textItem>
+								<dataSource>
+									<staticValue>Parameters</staticValue>
+								</dataSource>
+								<style>
+									<defaultStyles>
+										<defaultStyle refStyle="tt"/>
+									</defaultStyles>
+								</style>
+							</textItem>
+						</contents>
+						<style>
+							<defaultStyles>
+								<defaultStyle refStyle="ta"/>
+							</defaultStyles>
+						</style>
+					</block>
+				</contents>
+				<style>
+					<defaultStyles>
+						<defaultStyle refStyle="hp"/>
+					</defaultStyles>
+				</style>
+			</pageHeader>
+			<pageBody>
+				<contents><table><style><defaultStyles><defaultStyle refStyle="tb"/></defaultStyles><CSS value="border-collapse:collapse;width:50%"/></style><tableRows><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_DUALCURR</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_DUALCURR"><defaultSelections><defaultSimpleSelection>EUR</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_FUNC</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_FUNC"><defaultSelections><defaultSimpleSelection>QZPORD</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_LANG</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_LANG"><defaultSelections><defaultSimpleSelection>EN</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_USER</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_USER"><defaultSelections><defaultSimpleSelection>R5</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_VERSION</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_VERSION"><defaultSelections><defaultSimpleSelection>7.9</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_CONFIDENTIAL</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_CONFIDENTIAL"><defaultSelections><defaultSimpleSelection>-</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_ORG</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_ORG"><defaultSelections><defaultSimpleSelection>*</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_BATCHTRANSACTIONID</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_BATCHTRANSACTIONID"><defaultSelections><defaultSimpleSelection>0</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_DESTYPE</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_DESTYPE"><defaultSelections><defaultSimpleSelection>PREVIEW</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_FRONTPG</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_FRONTPG"><defaultSelections><defaultSimpleSelection>+</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_DEFORG</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_DEFORG"><defaultSelections><defaultSimpleSelection>*</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>R5_CP</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="R5_CP"><defaultSelections><defaultSimpleSelection>-</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>SEL_ORG</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="SEL_ORG"><defaultSelections><defaultSimpleSelection>QBUZZ-NOORD</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents><textItem><dataSource><staticValue>SEL_ORDER</staticValue></dataSource></textItem></contents></tableCell><tableCell><contents><textBox parameter="SEL_ORDER"><defaultSelections><defaultSimpleSelection>21748</defaultSimpleSelection></defaultSelections></textBox></contents></tableCell></tableCells></tableRow><tableRow><tableCells><tableCell><contents/></tableCell><tableCell><contents/></tableCell></tableCells></tableRow></tableRows></table></contents>
+				<style>
+					<defaultStyles>
+						<defaultStyle refStyle="py"/>
+					</defaultStyles>
+				</style>
+			</pageBody>
+			<pageFooter>
+				<contents>
+					<promptButton type="cancel">
+						<contents/>
+						<style>
+							<defaultStyles>
+								<defaultStyle refStyle="bp"/>
+							</defaultStyles>
+						</style>
+					</promptButton>
+					<promptButton type="back">
+						<contents/>
+						<style>
+							<defaultStyles>
+								<defaultStyle refStyle="bp"/>
+							</defaultStyles>
+						</style>
+					</promptButton>
+					<promptButton type="next">
+						<contents/>
+						<style>
+							<defaultStyles>
+								<defaultStyle refStyle="bp"/>
+							</defaultStyles>
+						</style>
+					</promptButton>
+					<promptButton type="finish">
+						<contents/>
+						<style>
+							<defaultStyles>
+								<defaultStyle refStyle="bp"/>
+							</defaultStyles>
+						</style>
+					</promptButton>
+				</contents>
+				<style>
+					<defaultStyles>
+						<defaultStyle refStyle="fp"/>
+					</defaultStyles>
+				</style>
+			</pageFooter>
+			<style>
+				<defaultStyles>
+					<defaultStyle refStyle="pp"/>
+				</defaultStyles>
+			</style>
+		</page></promptPages></layout>
+				</layouts>
+			<XMLAttributes><XMLAttribute output="no" name="RS_CreateExtendedDataItems" value="true"/><XMLAttribute output="no" name="listSeparator" value=","/><XMLAttribute output="no" name="decimalSeparator" value="."/><XMLAttribute output="no" name="RS_modelModificationTime" value="2022-08-18T14:56:04.307Z"/></XMLAttributes><modelPath>/content/package[@name=&apos;HxGNEAMPackage_11x&apos;]/model[@name=&apos;model&apos;]</modelPath><reportName>QZPORD.xml</reportName><queries><query name="HeaderQuery">
+			<source>
+				
+			<sqlQuery name="SQL1" dataSource="AdvRepData">
+			<sqlText>SELECT  TO_CHAR(ORD_DATE, &apos;DD-MM-YYYY&apos;) ORD_DATE,ORD_CODE,ORD_REVISION,COM_DESC,COM_FREIGHTTERMS,COM_PAYMENTTERMS,ADR_TEXT,(SELECT  ADR_TEXT FROM R5ADDRESS WHERE ADR_CODE =ORD_STORE AND ADR_RTYPE=&apos;D&apos; AND ADR_RENTITY=&apos;STOR&apos;)STOREADDRESS ,ADR_PHONE, ORD_ORIGIN,PER_DESC FROM R5ORDERS
+ LEFT  JOIN R5COMPANIES ON COM_CODE=ORD_SUPPLIER
+ LEFT  JOIN R5ADDRESS ON COM_CODE= SUBSTR(ADR_CODE, 1, INSTR(ADR_CODE, &apos;#&apos;) - 1) AND ADR_RENTITY=&apos;COMP&apos; AND ADR_RTYPE=&apos;M&apos;
+ LEFT JOIN R5PERSONNEL ON ORD_ORIGIN=PER_CODE
+ WHERE   ord_code = #PROMPT(&apos;SEL_ORDER&apos;)#
+        AND  (  ord_org = #PROMPT(&apos;SEL_ORG&apos;)# OR  #PROMPT(&apos;SEL_ORG&apos;)#= &apos;%&apos;)</sqlText>
+		<mdProjectedItems><mdProjectedItem name="ORD_DATE"/><mdProjectedItem name="ORD_CODE"/><mdProjectedItem name="ORD_REVISION"/><mdProjectedItem name="COM_DESC"/><mdProjectedItem name="COM_FREIGHTTERMS"/><mdProjectedItem name="COM_PAYMENTTERMS"/><mdProjectedItem name="ADR_TEXT"/><mdProjectedItem name="STOREADDRESS"/><mdProjectedItem name="ADR_PHONE"/><mdProjectedItem name="ORD_ORIGIN"/><mdProjectedItem name="PER_DESC"/></mdProjectedItems></sqlQuery></source>
+			<selection><dataItem name="ORD_DATE"><expression>[SQL1].[ORD_DATE]</expression></dataItem><dataItem name="ORD_CODE"><expression>[SQL1].[ORD_CODE]</expression></dataItem><dataItem name="ORD_REVISION"><expression>[SQL1].[ORD_REVISION]</expression></dataItem><dataItem name="COM_DESC"><expression>[SQL1].[COM_DESC]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="COM_FREIGHTTERMS"><expression>[SQL1].[COM_FREIGHTTERMS]</expression></dataItem><dataItem name="COM_PAYMENTTERMS"><expression>[SQL1].[COM_PAYMENTTERMS]</expression></dataItem><dataItem name="ADR_TEXT"><expression>[SQL1].[ADR_TEXT]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="STOREADDRESS"><expression>[SQL1].[STOREADDRESS]</expression></dataItem><dataItem name="ADR_PHONE"><expression>[SQL1].[ADR_PHONE]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="ORD_ORIGIN"><expression>[SQL1].[ORD_ORIGIN]</expression></dataItem><dataItem name="PER_DESC"><expression>[SQL1].[PER_DESC]</expression></dataItem><dataItem name="BTEXT0030"><expression>#sq($BOILERTEXTS{&apos;30&apos;})#</expression></dataItem><dataItem name="BTEXT0029"><expression>#sq($BOILERTEXTS{&apos;29&apos;})#</expression></dataItem><dataItem name="BTEXT0028"><expression>#sq($BOILERTEXTS{&apos;28&apos;})#</expression></dataItem><dataItem name="BTEXT0027"><expression>#sq($BOILERTEXTS{&apos;27&apos;})#</expression></dataItem><dataItem name="BTEXT0026"><expression>#sq($BOILERTEXTS{&apos;26&apos;})#</expression></dataItem><dataItem name="BTEXT0025"><expression>#sq($BOILERTEXTS{&apos;25&apos;})#</expression></dataItem><dataItem name="BTEXT0024"><expression>#sq($BOILERTEXTS{&apos;24&apos;})#</expression></dataItem><dataItem name="BTEXT0023"><expression>#sq($BOILERTEXTS{&apos;23&apos;})#</expression></dataItem><dataItem name="BTEXT0022"><expression>#sq($BOILERTEXTS{&apos;22&apos;})#</expression></dataItem><dataItem name="BTEXT0021"><expression>#sq($BOILERTEXTS{&apos;21&apos;})#</expression></dataItem><dataItem name="BTEXT0020"><expression>#sq($BOILERTEXTS{&apos;20&apos;})#</expression></dataItem><dataItem name="BTEXT0019"><expression>#sq($BOILERTEXTS{&apos;19&apos;})#</expression></dataItem><dataItem name="BTEXT0018"><expression>#sq($BOILERTEXTS{&apos;18&apos;})#</expression></dataItem><dataItem name="BTEXT0017"><expression>#sq($BOILERTEXTS{&apos;17&apos;})#</expression></dataItem><dataItem name="BTEXT0016"><expression>#sq($BOILERTEXTS{&apos;16&apos;})#</expression></dataItem><dataItem name="BTEXT0015"><expression>#sq($BOILERTEXTS{&apos;15&apos;})#</expression></dataItem><dataItem name="BTEXT0014"><expression>#sq($BOILERTEXTS{&apos;14&apos;})#</expression></dataItem><dataItem name="BTEXT0013"><expression>#sq($BOILERTEXTS{&apos;13&apos;})#</expression></dataItem><dataItem name="BTEXT0012"><expression>#sq($BOILERTEXTS{&apos;12&apos;})#</expression></dataItem><dataItem name="BTEXT0011"><expression>#sq($BOILERTEXTS{&apos;11&apos;})#</expression></dataItem><dataItem name="BTEXT0010"><expression>#sq($BOILERTEXTS{&apos;10&apos;})#</expression></dataItem><dataItem name="BTEXT009"><expression>#sq($BOILERTEXTS{&apos;9&apos;})#</expression></dataItem><dataItem name="BTEXT008"><expression>#sq($BOILERTEXTS{&apos;8&apos;})#</expression></dataItem><dataItem name="BTEXT007"><expression>#sq($BOILERTEXTS{&apos;7&apos;})#</expression></dataItem><dataItem name="BTEXT006"><expression>#sq($BOILERTEXTS{&apos;6&apos;})#</expression></dataItem><dataItem name="BTEXT005"><expression>#sq($BOILERTEXTS{&apos;5&apos;})#</expression></dataItem><dataItem name="BTEXT004"><expression>#sq($BOILERTEXTS{&apos;4&apos;})#</expression></dataItem><dataItem name="BTEXT003"><expression>#sq($BOILERTEXTS{&apos;3&apos;})#</expression></dataItem><dataItem name="BTEXT002"><expression>#sq($BOILERTEXTS{&apos;2&apos;})#</expression></dataItem><dataItem name="BTEXT001"><expression>#sq($BOILERTEXTS{&apos;1&apos;})#</expression></dataItem><dataItem name="D7ILOGO"><expression>#sq($INSTALLPARAMETERS{&apos;EAMRLOGO&apos;})#</expression></dataItem><dataItem name="CMPRLOGO"><expression>#sq($INSTALLPARAMETERS{&apos;CMPRLOGO&apos;})#</expression></dataItem></selection>
+		</query><query name="DetailQuery">
+			<source>
+				
+			<sqlQuery name="SQL2" dataSource="AdvRepData">
+			<sqlText>  SELECT
+  orl_event
+  ,Evt_udfchar41
+  ,  SUM(orl_price * orl_ordqty) TOTAAL
+  , &apos;€ &apos; || R5REP.repfmtmonnumlocale(#PROMPT(&apos;R5_USER&apos;)#,#PROMPT(&apos;R5_ORG&apos;)#, SUM(orl_price * orl_ordqty)) AS total
+    , &apos;€ &apos; || R5REP.repfmtmonnumlocale(#PROMPT(&apos;R5_USER&apos;)#,#PROMPT(&apos;R5_ORG&apos;)#, 0) AS ORL_TOTTAXAMOUNT
+  FROM  R5EVENTS LEFT JOIN R5ORDERLINES ON evt_code=orl_event
+                 LEFT JOIN R5ORDERS     ON orl_order=ord_code AND orl_order_org = ord_org
+  WHERE ord_code = #PROMPT(&apos;SEL_ORDER&apos;)#
+  AND   (  ord_org = #PROMPT(&apos;SEL_ORG&apos;)# OR  #PROMPT(&apos;SEL_ORG&apos;)#= &apos;%&apos;)
+  GROUP BY orl_event,ORL_TOTTAXAMOUNT,Evt_udfchar41  order  by orl_event</sqlText>
+		<mdProjectedItems><mdProjectedItem name="ORL_EVENT"/><mdProjectedItem name="EVT_UDFCHAR41"/><mdProjectedItem name="TOTAAL"/><mdProjectedItem name="TOTAL"/><mdProjectedItem name="ORL_TOTTAXAMOUNT"/></mdProjectedItems></sqlQuery></source>
+			<selection><dataItemListSummary aggregateMethod="total" name="Total(TOTAL)" refDataItem="TOTAL"><XMLAttributes><XMLAttribute name="RS_dataType" output="no" value="9"/></XMLAttributes></dataItemListSummary><dataItemListSummary aggregateMethod="total" name="Total(TOTAL)2" refDataItem="TOTAL"><XMLAttributes><XMLAttribute name="RS_dataType" output="no" value="9"/></XMLAttributes></dataItemListSummary><dataItemListSummary aggregateMethod="total" name="Total(TOTAL)1" refDataItem="TOTAL"><XMLAttributes><XMLAttribute name="RS_dataType" output="no" value="9"/></XMLAttributes></dataItemListSummary><dataItem name="TOTAAL"><expression>[SQL2].[TOTAAL]</expression></dataItem><dataItem name="Data Item1"><expression>SUM([SQL2].[TOTAL])+[SQL2].[ORL_TOTTAXAMOUNT]</expression></dataItem><dataItem name="EVT_UDFCHAR41"><expression>[SQL2].[EVT_UDFCHAR41]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="ORL_TOTTAXAMOUNT"><expression>[SQL2].[ORL_TOTTAXAMOUNT]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="ORL_EVENT"><expression>[SQL2].[ORL_EVENT]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="TOTAL"><expression>[SQL2].[TOTAL]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="final Total"><expression>[Total(TOTAL)]+[ORL_TOTTAXAMOUNT]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="9"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem><dataItem name="Data Item2"><expression>TOTAL([SQL2].[TOTAAL])</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="9"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem></selection>
+		</query><query name="Query1">
+			<source>
+				
+			<sqlQuery name="SQL3" dataSource="AdvRepData">
+			<sqlText>SELECT &apos;€ &apos; || R5REP.repfmtmonnumlocale(#PROMPT(&apos;R5_USER&apos;)#,#PROMPT(&apos;R5_ORG&apos;)#, SUM(E.TOTAAL)) subTotal from  
+( SELECT
+  orl_event
+  ,Evt_udfchar41
+  ,  SUM(orl_price * orl_ordqty) TOTAAL
+  , &apos;€ &apos; || R5REP.repfmtmonnumlocale(#PROMPT(&apos;R5_USER&apos;)#,#PROMPT(&apos;R5_ORG&apos;)#, SUM(orl_price * orl_ordqty)) AS total
+    , &apos;€ &apos; || R5REP.repfmtmonnumlocale(#PROMPT(&apos;R5_USER&apos;)#,#PROMPT(&apos;R5_ORG&apos;)#, 0) AS ORL_TOTTAXAMOUNT
+ 
+-- , &apos;0,00&apos; AS ORL_TOTTAXAMOUNT
+  FROM  R5EVENTS LEFT JOIN R5ORDERLINES ON evt_code=orl_event
+                 LEFT JOIN R5ORDERS     ON orl_order=ord_code AND orl_order_org = ord_org
+  WHERE ord_code = #PROMPT(&apos;SEL_ORDER&apos;)#
+  AND (  ord_org = #PROMPT(&apos;SEL_ORG&apos;)# OR  #PROMPT(&apos;SEL_ORG&apos;)#= &apos;%&apos;)
+  GROUP BY orl_event,ORL_TOTTAXAMOUNT,Evt_udfchar41) E</sqlText>
+		<mdProjectedItems><mdProjectedItem name="SUBTOTAL"/></mdProjectedItems></sqlQuery></source>
+			<selection><dataItem name="SUBTOTAL"><expression>[SQL3].[SUBTOTAL]</expression><XMLAttributes><XMLAttribute output="no" name="RS_dataType" value="3"/><XMLAttribute output="no" name="RS_dataUsage" value=""/></XMLAttributes></dataItem></selection>
+		</query></queries><classStyles><classStyle name="GuidedLayoutLeftPadding"><CSS value="padding-left:5px;border-top-width:1px;border-bottom-width:1px;border-left-width:1px;border-right-width:1px"/></classStyle><classStyle name="GuidedLayoutTopPadding"><CSS value="padding-top:5px;border-top-width:1px;border-bottom-width:1px;border-left-width:1px;border-right-width:1px"/></classStyle><classStyle name="GuidedLayoutRightPadding"><CSS value="padding-right:5px;border-top-width:1px;border-bottom-width:1px;border-left-width:1px;border-right-width:1px"/></classStyle><classStyle name="GuidedLayoutBottomPadding"><CSS value="padding-bottom:5px;border-top-width:1px;border-bottom-width:1px;border-left-width:1px;border-right-width:1px"/></classStyle><classStyle name="GuidedLayoutMargin"><CSS value="margin-bottom:10px"/></classStyle></classStyles></report>
