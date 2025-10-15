@@ -38,7 +38,7 @@
 -- 0023 24-01-2024 - SPC-630 Build a check for verify the Price Per H ('wspf_10_ou_partprice') value must be greater than 0.
 -- 0024 30-01-2024 - SPC-630 Error Message update base on user language.
 -- 0025 03-06-2024 - SPC-698 Set layout for Part and Part Description, and populate Part Description.
--- 0026 15-10-2025 - SPC-768 Note field mandatory based on status(TCS/TC).
+-- 0026 15-10-2025 - SPC-768 Note field mandatory based on status(TCS/TC). {Addd some extra cmt}
 -- -------------------------------------------------------------------------------
  */
 
