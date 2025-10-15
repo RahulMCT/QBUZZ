@@ -38,6 +38,7 @@
 -- 0023 24-01-2024 - SPC-630 Build a check for verify the Price Per H ('wspf_10_ou_partprice') value must be greater than 0.
 -- 0024 30-01-2024 - SPC-630 Error Message update base on user language.
 -- 0025 03-06-2024 - SPC-698 Set layout for Part and Part Description, and populate Part Description.
+-- 0026 15-10-2025 - SPC-768 Note field mandatory based on status(TCS/TC).
 -- -------------------------------------------------------------------------------
  */
 
@@ -173,7 +174,7 @@ Ext.define('EAM.custom.external_wsjobo', {
                         } else {
                             protectHdrField(formPanel, "");
                         }
-
+                        fieldStateSetNoteFld(formPanel);
                         //EAM.Utils.debugMessage(" headerStatus afterrender function called " + headerStatus);
 
 
@@ -2543,10 +2544,10 @@ function partcodeDescPopulate(f) {
                     f.setFldValue("wspf_10_ou_partdes", vSupplierDsecs, true);
                 }
 
-            } else {
-                if (vPartFldDesc !== "") {
-                    f.setFldValue("wspf_10_ou_partdes", "", true);
-                }
+            }
+        } else {
+            if (vPartFldDesc !== "") {
+                f.setFldValue("wspf_10_ou_partdes", "", true);
             }
         }
         maintainFormPanelState(f);
@@ -2554,3 +2555,50 @@ function partcodeDescPopulate(f) {
         console.log("partcodeDescPopulate() Error: " + err);
     }
 };
+function fieldStateSetNoteFld(f, pAction) {
+    try {
+        console.log("fieldStateSetNoteFld() called!!");
+        var vStatus = f.getFldValue("workorderstatus"),
+        vFld = {};
+        console.log("#fieldStateSetNoteFld-Status: ", vStatus);
+        /*if (pAction === "recordchnage") {
+			if (vStatus === "TCS" || vStatus === "TC") {
+                vFld = {
+                    "udfnote02": "required"
+                }
+            }
+		}
+        else {*/
+            if (vStatus === "TCS" || vStatus === "TC") {
+                vFld = {
+                    "udfnote02": "required"
+                }
+            } else {
+               /* var vRequest = {
+                    SYSTEM_FUNCTION_NAME: "WSJOBS",
+                    USER_FUNCTION_NAME: "WSJOBO",
+                    CURRENT_TAB_NAME: "HDR",
+                    workordernum: f.getFldValue("workordernum"),
+                    organization: f.getFldValue("organization"),
+                    workorderrtype: f.getFldValue("workorderrtype"),
+                    SCROLLROW: "YES",
+                    ONLY_DATA_REQUIRED: true
+                },
+                vResponse = EAM.Ajax.request({
+                    url: "WSJOBS.HDR",
+                    params: vRequest,
+					async:true
+                });
+                if (vResponse.success) {
+                    console.log("vResponse: ", vResponse);
+                }*/
+				 vFld = {
+                    "udfnote02": "protected"
+                }
+            }
+        /*}*/
+        EAM.Builder.setFieldState(vFld, f.getForm().getFields());
+    } catch (err) {
+        console.log("fieldStateSetNoteFld() error: ", err);
+    }
+}
